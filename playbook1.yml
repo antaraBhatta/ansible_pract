@@ -1,0 +1,19 @@
+---
+- name: Test play
+  hosts: kubernetes_setup
+
+  tasks:
+
+      - name: Register output of hostnamectl command
+        ansible.builtin.command: hostnamectl
+        register: hostnamectl_contents
+
+      - name: Use the variable to check it contains Ubuntu OS
+        debug:
+          msg: "OS is Ubuntu"
+        when: hostnamectl_contents.stdout.find('Ubuntu') != -1
+
+      - name: Get a list of all pods from any namespace
+        community.kubernetes.k8s_info:
+          kind: Pod
+        register: pod_list
